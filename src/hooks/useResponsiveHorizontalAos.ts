@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AOS from "aos";
 
 /** Matches Tailwind `md` — horizontal slide animations overflow on small viewports. */
 const MD_MIN_WIDTH_PX = 768;
@@ -30,10 +29,18 @@ export function useResponsiveHorizontalAos(
   }, [desktop]);
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      AOS.refresh();
+    let cancelled = false;
+    let raf = 0;
+    void import("aos").then(({ default: AOS }) => {
+      if (cancelled) return;
+      raf = requestAnimationFrame(() => {
+        AOS.refresh();
+      });
     });
-    return () => cancelAnimationFrame(id);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
   }, [animation]);
 
   return animation;

@@ -26,11 +26,12 @@ export type ForWhomItem = {
   imageAlt: string;
 };
 
-export const heroPoints: IconPoint[] = [
-  { icon: "✍️", text: "২৫ দিনের structured handwriting transformation" },
-  { icon: "📘", text: "প্রতিদিন গাইডেড practice routine" },
-  { icon: "🎯", text: "পরীক্ষার খাতায় neat presentation focus" },
-];
+export type BeforeAfterSlide = {
+  beforeSrc: string;
+  afterSrc: string;
+  beforeAlt: string;
+  afterAlt: string;
+};
 
 export const problemPoints: string[] = [
   "লেখা পরিষ্কার নয়, তাই teacher দ্রুত বুঝতে পারেন না",
@@ -78,6 +79,41 @@ export const benefits: IconPoint[] = [
   { icon: "✅", text: "Exam copy হবে আরও readable ও score-friendly" },
   { icon: "✅", text: "Writing speed ও presentation-এ balanced উন্নতি আসবে" },
   { icon: "✅", text: "শিক্ষার্থীর confidence ও writing discipline বাড়বে" },
+];
+
+export const beforeAfterResults: BeforeAfterSlide[] = [
+  {
+    beforeSrc:
+      "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=80",
+    afterSrc:
+      "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=1200&q=80",
+    beforeAlt: "আগের লেখার উদাহরণ — ১",
+    afterAlt: "পরের লেখার উদাহরণ — ১",
+  },
+  {
+    beforeSrc:
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&q=80",
+    afterSrc:
+      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&q=80",
+    beforeAlt: "আগের লেখার উদাহরণ — ২",
+    afterAlt: "পরের লেখার উদাহরণ — ২",
+  },
+  {
+    beforeSrc:
+      "https://images.unsplash.com/photo-1588072432836-e10032774350?w=1200&q=80",
+    afterSrc:
+      "https://images.unsplash.com/photo-1544717305-2782549b5136?w=1200&q=80",
+    beforeAlt: "আগের লেখার উদাহরণ — ৩",
+    afterAlt: "পরের লেখার উদাহরণ — ৩",
+  },
+  {
+    beforeSrc:
+      "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1200&q=80",
+    afterSrc:
+      "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=1200&q=80",
+    beforeAlt: "আগের লেখার উদাহরণ — ৪",
+    afterAlt: "পরের লেখার উদাহরণ — ৪",
+  },
 ];
 
 export const forWhom: ForWhomItem[] = [

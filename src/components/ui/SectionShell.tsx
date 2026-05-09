@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { useResponsiveHorizontalAos } from "@/hooks/useResponsiveHorizontalAos";
+import { aosInit } from "@/utils/aosClass";
 
 type SectionShellProps = {
   id?: string;
@@ -28,7 +29,7 @@ export default function SectionShell({
     <section
       id={id}
       data-aos="fade-up"
-      className={`px-4 py-16 sm:px-8 lg:px-12 ${className}`}
+      className={aosInit(`px-4 py-16 sm:px-8 lg:px-12 ${className}`)}
     >
       <div className="mx-auto max-w-6xl">
         <div className={`mb-8 max-w-3xl space-y-3 ${headerClassName}`}>
@@ -36,7 +37,9 @@ export default function SectionShell({
             <p
               data-aos={eyebrowAos}
               data-aos-delay="40"
-              className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-800"
+              className={aosInit(
+                "inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-800",
+              )}
             >
               {eyebrow}
             </p>
@@ -44,7 +47,7 @@ export default function SectionShell({
           <h2
             data-aos="fade-up"
             data-aos-delay="100"
-            className="text-2xl font-bold text-emerald-950 sm:text-3xl"
+            className={aosInit("text-2xl font-bold text-emerald-950 sm:text-3xl")}
           >
             {title}
           </h2>
@@ -52,7 +55,7 @@ export default function SectionShell({
             <p
               data-aos="fade-up"
               data-aos-delay="150"
-              className="text-base leading-7 text-emerald-800/90"
+              className={aosInit("text-base leading-7 text-emerald-800/90")}
             >
               {description}
             </p>

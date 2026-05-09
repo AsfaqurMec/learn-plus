@@ -9,7 +9,7 @@
   /* --color-background: var(--background); */
   --color-foreground: var(--foreground);
   --font-sans: var(--font-noto-serif-bengali);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 body {
@@ -91,9 +91,6 @@ html {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: fixed;
-  transform: scale(1.08);
-  will-change: transform;
 }
 
 .offer-highlight-card {
@@ -123,17 +120,8 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   .floating-blob,
-  .floating-blob-delay,
-  .offer-parallax-bg {
+  .floating-blob-delay {
     animation: none !important;
     transform: none !important;
-    background-attachment: scroll !important;
-  }
-}
-
-@media (max-width: 1024px) {
-  .offer-parallax-bg {
-    background-attachment: scroll;
-    transform: none;
   }
 }

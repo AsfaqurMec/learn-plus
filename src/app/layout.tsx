@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Serif_Bengali } from "next/font/google";
+import { Geist, Noto_Serif_Bengali } from "next/font/google";
 import AosProvider from "@/components/ui/AosProvider";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -38,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="bn"
-      className={`${notoSerifBengali.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${notoSerifBengali.variable} ${geistSans.variable} h-full antialiased`}
     >
       <body className="min-h-full text-emerald-950">
         <AosProvider />

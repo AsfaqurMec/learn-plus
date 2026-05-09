@@ -1,3 +1,5 @@
+import { aosInit } from "@/utils/aosClass";
+
 type InfoCardProps = {
   icon: string;
   title: string;
@@ -15,7 +17,9 @@ export default function InfoCard({
     <article
       data-aos="zoom-in-up"
       data-aos-delay={delay}
-      className="hover-lift rounded-2xl border border-emerald-200 bg-white/90 p-5 shadow-sm"
+      className={aosInit(
+        "hover-lift rounded-2xl border border-emerald-200 bg-white/90 p-5 shadow-sm",
+      )}
     >
       <p className="mb-3 text-2xl">{icon}</p>
       <h3 className="mb-2 text-lg font-semibold text-emerald-950">{title}</h3>

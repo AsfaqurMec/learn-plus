@@ -1,35 +1,33 @@
-import {
-  BenefitsSection,
-  FaqSection,
-  FeaturesSection,
-  FinalCtaSection,
-  ForWhomSection,
-  HeroSection,
-  LandingFooter,
-  LandingNav,
-  OfferSection,
-  ProblemSection,
-  ResultsSection,
-  SolutionSection,
-  TestimonialSection,
-} from "@/modules/landing/components/LandingSections";
+import dynamic from "next/dynamic";
+import { HeroSection } from "@/modules/landing/components/HeroSection";
+import { LandingMobileContactBar } from "@/modules/landing/components/LandingMobileContactBar";
+import type { ResolvedLandingImages } from "@/types/resolvedLandingImages";
 
-export default function LandingPage() {
+const BelowFold = dynamic(
+  () =>
+    import("@/modules/landing/components/LandingSections").then((m) => ({
+      default: m.BelowFold,
+    })),
+  {
+    loading: () => (
+      <div
+        className="min-h-[50vh] animate-pulse bg-gradient-to-b from-emerald-50/90 to-emerald-100/40"
+        aria-hidden
+      />
+    ),
+  },
+);
+
+export default function LandingPage({
+  landingImages,
+}: {
+  landingImages: ResolvedLandingImages;
+}) {
   return (
-    <div className=" text-emerald-950">
-      <LandingNav />
-      <HeroSection />
-      <ProblemSection />
-      <SolutionSection />
-      <FeaturesSection />
-      <ResultsSection />
-      <BenefitsSection />
-      <ForWhomSection />
-      <TestimonialSection />
-      <OfferSection />
-      <FaqSection />
-      <FinalCtaSection />
-      <LandingFooter />
+    <div className="pb-14 text-emerald-950 md:pb-0">
+      <LandingMobileContactBar />
+      <HeroSection heroSrc={landingImages.hero} />
+      <BelowFold landingImages={landingImages} />
     </div>
   );
 }
