@@ -5,6 +5,7 @@ import Pagination from "@/components/ui/Pagination";
 import {
   fetchAdminEnrollments,
   updateEnrollmentStatus,
+  deleteEnrollment,
   type EnrollmentRow,
 } from "@/services/adminEnrollmentService";
 import {
@@ -28,6 +29,8 @@ export default function AdminRequestsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<EnrollmentRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<{
     type: "ok" | "err";
     text: string;
@@ -71,7 +74,18 @@ export default function AdminRequestsPage() {
 
   useEffect(() => {
     load();
+    
   }, [load]);
+
+  useEffect(() => {
+    if (!toast) return;
+
+  const timer = setTimeout(() => {
+    setToast(null);
+  }, 5000); // 5 seconds
+
+  return () => clearTimeout(timer);
+  }, [toast]);
 
   const onStatusChange = async (id: string, next: EnrollmentStatus) => {
     setUpdatingId(id);
@@ -86,6 +100,33 @@ export default function AdminRequestsPage() {
       }
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const onDelete = async () => {
+    if (!deleteTarget) return;
+  
+    setDeleting(true);
+  
+    try {
+      const result = await deleteEnrollment(deleteTarget.id);
+  
+      if (result.ok) {
+        setToast({
+          type: "ok",
+          text: result.message,
+        });
+  
+        setDeleteTarget(null);
+        await load();
+      } else {
+        setToast({
+          type: "err",
+          text: result.message,
+        });
+      }
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -150,6 +191,7 @@ export default function AdminRequestsPage() {
                   <th className="px-3 py-3 font-medium">Wants improvement</th>
                   <th className="px-3 py-3 font-medium">Status</th>
                   <th className="px-3 py-3 font-medium">Submitted</th>
+                  <th className="px-3 py-3 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,6 +231,16 @@ export default function AdminRequestsPage() {
                     <td className="whitespace-nowrap px-3 py-3 text-slate-600">
                       {new Date(row.createdAt).toLocaleString()}
                     </td>
+
+                    <td className="px-3 py-3">
+                      <button
+                        onClick={() => setDeleteTarget(row)}
+                        className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </td>
+
                   </tr>
                 ))}
               </tbody>
@@ -209,6 +261,47 @@ export default function AdminRequestsPage() {
           />
         </>
       ) : null}
+
+{deleteTarget && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <h2 className="text-lg font-semibold text-slate-900">
+        Delete Request
+      </h2>
+
+      <p className="mt-3 text-sm text-slate-600">
+        Are you sure you want to delete the request from{" "}
+        <span className="font-semibold">
+          {deleteTarget.parentName}
+        </span>
+        ?
+      </p>
+
+      <p className="mt-2 text-sm text-red-600">
+        This action cannot be undone.
+      </p>
+
+      <div className="mt-6 flex justify-end gap-3">
+        <button
+          disabled={deleting}
+          onClick={() => setDeleteTarget(null)}
+          className="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          disabled={deleting}
+          onClick={onDelete}
+          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+        >
+          {deleting ? "Deleting..." : "Delete"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

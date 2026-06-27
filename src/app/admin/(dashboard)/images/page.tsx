@@ -8,6 +8,7 @@ import {
   saveAdminLandingImages,
 } from "@/services/adminLandingImagesService";
 import type { LandingImagesPayload } from "@/types/landingImages";
+import AccordionSection from "@/modules/admin/components/AccordionSection";
 
 const INITIAL_FORM: LandingImagesPayload = {
   banner: "",
@@ -38,6 +39,58 @@ export default function AdminImagesPage() {
   } | null>(null);
   const [form, setForm] = useState<LandingImagesPayload>(INITIAL_FORM);
   const [confirm, setConfirm] = useState<ConfirmState>(null);
+
+  const [openSections, setOpenSections] = useState({
+    banner: false,
+    parentPainPoint: false,
+    sectionImages: false,
+    beforeAfter: false,
+    forWhom: false,
+  });
+
+  const [openSteps, setOpenSteps] = useState<Record<number, boolean>>({});
+  
+  const toggleSection = (key: keyof typeof openSections) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const [openImageSections, setOpenImageSections] = useState({
+    ourSolution: true,
+    studentBenefit: true,
+    testimonial: true,
+    limitedTimeOffer: true,
+    program: true,
+  });
+  
+  const toggleImageSection = (
+    key: keyof typeof openImageSections
+  ) => {
+    setOpenImageSections((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const [openBeforeAfterItems, setOpenBeforeAfterItems] = useState<
+  Record<number, boolean>
+>({});
+
+const [openForWhomItems, setOpenForWhomItems] = useState<
+  Record<number, boolean>
+>({});
+
+  useEffect(() => {
+    if (!toast) return;
+
+  const timer = setTimeout(() => {
+    setToast(null);
+  }, 5000); // 5 seconds
+
+  return () => clearTimeout(timer);
+  }, [toast]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -148,271 +201,623 @@ export default function AdminImagesPage() {
       ) : error ? (
         <p className="mt-8 text-red-700">{error}</p>
       ) : (
-        <div className="mt-8 space-y-8">
-          <section className="rounded-xl border border-slate-200 bg-white p-5">
-            <h2 className="text-lg font-semibold text-slate-900">Banner</h2>
-            <div className="mt-4">
-              <ImageUploader
-                label="Banner image"
-                value={form.banner}
-                onChange={(value) =>
-                  setForm((prev) => ({ ...prev, banner: value }))
-                }
-                disabled={saving}
-              />
-            </div>
-          </section>
+        <div className="mt-8 space-y-4">
+       
 
-          <section className="rounded-xl border border-slate-200 bg-white p-5">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-slate-900">
-                Parent Pain Point
-              </h2>
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => {
-                  setForm((prev) => ({
-                    ...prev,
-                    parentPainPoints: [...prev.parentPainPoints, ""],
-                  }));
-                  setToast({ type: "ok", text: "Step added." });
-                }}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-800"
-              >
-                Add step
-              </button>
-            </div>
-            <div className="mt-4 space-y-4">
-              {form.parentPainPoints.map((url, index) => (
-                <div key={`pain-point-${index}`} className="rounded-lg border border-slate-200 p-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <p className="text-sm font-medium text-slate-800">
-                      Step {index + 1}
-                    </p>
-                    <button
-                      type="button"
-                      disabled={saving}
-                      onClick={() =>
-                        setConfirm({ type: "parentPainPoint", index })
-                      }
-                      className="text-xs font-semibold text-red-700"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <ImageUploader
-                    label={`Step ${index + 1} image`}
-                    value={url}
-                    onChange={(value) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        parentPainPoints: prev.parentPainPoints.map((item, i) =>
-                          i === index ? value : item,
-                        ),
-                      }))
-                    }
-                    disabled={saving}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
+          <AccordionSection
+            title="Banner"
+            isOpen={openSections.banner}
+            onToggle={() => toggleSection("banner")}
+          >
+            <ImageUploader
+              label="Banner image"
+              value={form.banner}
+              onChange={(value) =>
+                setForm((prev) => ({ ...prev, banner: value }))
+              }
+              disabled={saving}
+            />
+          </AccordionSection>
 
-          <section className="grid gap-6 rounded-xl border border-slate-200 bg-white p-5 sm:grid-cols-2">
-            <ImageUploader
-              label="Our Solution"
-              value={form.ourSolution}
-              onChange={(value) =>
-                setForm((prev) => ({ ...prev, ourSolution: value }))
-              }
-              disabled={saving}
-            />
-            <ImageUploader
-              label="Student Benefit"
-              value={form.studentBenefit}
-              onChange={(value) =>
-                setForm((prev) => ({ ...prev, studentBenefit: value }))
-              }
-              disabled={saving}
-            />
-            <ImageUploader
-              label="Testimonial"
-              value={form.testimonial}
-              onChange={(value) =>
-                setForm((prev) => ({ ...prev, testimonial: value }))
-              }
-              disabled={saving}
-            />
-            <ImageUploader
-              label="Limited Time Offer"
-              value={form.limitedTimeOffer}
-              onChange={(value) =>
-                setForm((prev) => ({ ...prev, limitedTimeOffer: value }))
-              }
-              disabled={saving}
-            />
-            <ImageUploader
-              label="Program"
-              value={form.program}
-              onChange={(value) =>
-                setForm((prev) => ({ ...prev, program: value }))
-              }
-              disabled={saving}
-            />
-          </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-5">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-slate-900">
-                Before &amp; After
-              </h2>
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => {
-                  setForm((prev) => ({
-                    ...prev,
-                    beforeAfter: [...prev.beforeAfter, { before: "", after: "" }],
-                  }));
-                  setToast({ type: "ok", text: "Before/after item added." });
-                }}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-800"
-              >
-                Add item
-              </button>
-            </div>
-            <div className="mt-4 space-y-6">
-              {form.beforeAfter.map((item, index) => (
-                <div key={`before-after-${index}`} className="rounded-lg border border-slate-200 p-3">
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="text-sm font-medium text-slate-800">
-                      Item {index + 1}
-                    </p>
-                    <button
-                      type="button"
-                      disabled={saving}
-                      onClick={() => setConfirm({ type: "beforeAfter", index })}
-                      className="text-xs font-semibold text-red-700"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <ImageUploader
-                      label="Before image"
-                      value={item.before}
-                      onChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          beforeAfter: prev.beforeAfter.map((row, i) =>
-                            i === index ? { ...row, before: value } : row,
-                          ),
-                        }))
-                      }
-                      disabled={saving}
-                    />
-                    <ImageUploader
-                      label="After image"
-                      value={item.after}
-                      onChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          beforeAfter: prev.beforeAfter.map((row, i) =>
-                            i === index ? { ...row, after: value } : row,
-                          ),
-                        }))
-                      }
-                      disabled={saving}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+           
+           <AccordionSection
+  title="Parent Pain Point"
+  isOpen={openSections.parentPainPoint}
+  onToggle={() => toggleSection("parentPainPoint")}
+>
+  <div className="w-full flex justify-end">
+<button
+      type="button"
+      disabled={saving}
+      onClick={() => {
+        setForm((prev) => ({
+          ...prev,
+          parentPainPoints: [...prev.parentPainPoints, ""],
+        }));
+        setToast({ type: "ok", text: "Step added." });
+      }}
+      className="rounded-lg border border-slate-300 bg-[#009966] px-3 py-1.5 text-sm font-medium text-white mb-5 cursor-pointer"
+    >
+      Add Step
+    </button>
+  </div>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-5">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-slate-900">For Whom</h2>
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => {
-                  setForm((prev) => ({
-                    ...prev,
-                    forWhom: [...prev.forWhom, { image: "", title: "" }],
-                  }));
-                  setToast({ type: "ok", text: "For-whom item added." });
-                }}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-800"
-              >
-                Add item
-              </button>
-            </div>
-            <div className="mt-4 space-y-6">
-              {form.forWhom.map((item, index) => (
-                <div key={`for-whom-${index}`} className="rounded-lg border border-slate-200 p-3">
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="text-sm font-medium text-slate-800">
-                      Item {index + 1}
-                    </p>
-                    <button
-                      type="button"
-                      disabled={saving}
-                      onClick={() => setConfirm({ type: "forWhom", index })}
-                      className="text-xs font-semibold text-red-700"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <div className="space-y-3">
-                    <ImageUploader
-                      label="Image"
-                      value={item.image}
-                      onChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          forWhom: prev.forWhom.map((row, i) =>
-                            i === index ? { ...row, image: value } : row,
-                          ),
-                        }))
+  <div className="space-y-4">
+  {form.parentPainPoints.map((url, index) => (
+    <AccordionSection
+      key={`pain-point-${index}`}
+      title={`Step ${index + 1}`}
+      isOpen={openSteps[index] ?? true}
+      onToggle={() =>
+        setOpenSteps((prev) => ({
+          ...prev,
+          [index]: !prev[index],
+        }))
+      }
+      rightContent={
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() =>
+            setConfirm({
+              type: "parentPainPoint",
+              index,
+            })
+          }
+          className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+        >
+          Remove
+        </button>
+      }
+    >
+      <ImageUploader
+        label={`Step ${index + 1} image`}
+        value={url}
+        onChange={(value) =>
+          setForm((prev) => ({
+            ...prev,
+            parentPainPoints: prev.parentPainPoints.map((item, i) =>
+              i === index ? value : item
+            ),
+          }))
+        }
+        disabled={saving}
+      />
+    </AccordionSection>
+  ))}
+</div>
+  {/* <div className="space-y-4">
+    {form.parentPainPoints.map((url, index) => (
+      <div
+        key={`pain-point-${index}`}
+        className="rounded-lg border border-slate-200 p-3"
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-sm font-medium text-slate-800">
+            Step {index + 1}
+          </p>
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              setConfirm({ type: "parentPainPoint", index })
+            }
+            className="text-xs font-semibold text-white bg-red-700 rounded-lg border border-slate-300 px-3 py-1.5 cursor-pointer"
+          >
+            Remove
+          </button>
+        </div>
+
+        <ImageUploader
+          label={`Step ${index + 1} image`}
+          value={url}
+          onChange={(value) =>
+            setForm((prev) => ({
+              ...prev,
+              parentPainPoints: prev.parentPainPoints.map((item, i) =>
+                i === index ? value : item
+              ),
+            }))
+          }
+          disabled={saving}
+        />
+      </div>
+    ))}
+  </div> */}
+</AccordionSection>
+
+
+<AccordionSection
+  title="Section Images"
+  isOpen={openSections.sectionImages}
+  onToggle={() => toggleSection("sectionImages")}
+>
+
+<div className="space-y-4">
+  <AccordionSection
+    title="Our Solution"
+    isOpen={openImageSections.ourSolution}
+    onToggle={() => toggleImageSection("ourSolution")}
+  >
+    <ImageUploader
+      label="Our Solution"
+      value={form.ourSolution}
+      onChange={(value) =>
+        setForm((prev) => ({
+          ...prev,
+          ourSolution: value,
+        }))
+      }
+      disabled={saving}
+    />
+  </AccordionSection>
+
+  <AccordionSection
+    title="Student Benefit"
+    isOpen={openImageSections.studentBenefit}
+    onToggle={() => toggleImageSection("studentBenefit")}
+  >
+    <ImageUploader
+      label="Student Benefit"
+      value={form.studentBenefit}
+      onChange={(value) =>
+        setForm((prev) => ({
+          ...prev,
+          studentBenefit: value,
+        }))
+      }
+      disabled={saving}
+    />
+  </AccordionSection>
+
+  <AccordionSection
+    title="Testimonial"
+    isOpen={openImageSections.testimonial}
+    onToggle={() => toggleImageSection("testimonial")}
+  >
+    <ImageUploader
+      label="Testimonial"
+      value={form.testimonial}
+      onChange={(value) =>
+        setForm((prev) => ({
+          ...prev,
+          testimonial: value,
+        }))
+      }
+      disabled={saving}
+    />
+  </AccordionSection>
+
+  <AccordionSection
+    title="Limited Time Offer"
+    isOpen={openImageSections.limitedTimeOffer}
+    onToggle={() => toggleImageSection("limitedTimeOffer")}
+  >
+    <ImageUploader
+      label="Limited Time Offer"
+      value={form.limitedTimeOffer}
+      onChange={(value) =>
+        setForm((prev) => ({
+          ...prev,
+          limitedTimeOffer: value,
+        }))
+      }
+      disabled={saving}
+    />
+  </AccordionSection>
+
+  <AccordionSection
+    title="Program"
+    isOpen={openImageSections.program}
+    onToggle={() => toggleImageSection("program")}
+  >
+    <ImageUploader
+      label="Program"
+      value={form.program}
+      onChange={(value) =>
+        setForm((prev) => ({
+          ...prev,
+          program: value,
+        }))
+      }
+      disabled={saving}
+    />
+  </AccordionSection>
+</div>
+  {/* <div className="grid gap-6 sm:grid-cols-1">
+    <ImageUploader
+      label="Our Solution"
+      value={form.ourSolution}
+      onChange={(value) =>
+        setForm((prev) => ({ ...prev, ourSolution: value }))
+      }
+      disabled={saving}
+    />
+
+    <ImageUploader
+      label="Student Benefit"
+      value={form.studentBenefit}
+      onChange={(value) =>
+        setForm((prev) => ({ ...prev, studentBenefit: value }))
+      }
+      disabled={saving}
+    />
+
+    <ImageUploader
+      label="Testimonial"
+      value={form.testimonial}
+      onChange={(value) =>
+        setForm((prev) => ({ ...prev, testimonial: value }))
+      }
+      disabled={saving}
+    />
+
+    <ImageUploader
+      label="Limited Time Offer"
+      value={form.limitedTimeOffer}
+      onChange={(value) =>
+        setForm((prev) => ({
+          ...prev,
+          limitedTimeOffer: value,
+        }))
+      }
+      disabled={saving}
+    />
+
+    <ImageUploader
+      label="Program"
+      value={form.program}
+      onChange={(value) =>
+        setForm((prev) => ({ ...prev, program: value }))
+      }
+      disabled={saving}
+    />
+  </div> */}
+</AccordionSection>
+
+
+
+<AccordionSection
+  title="Before & After"
+  isOpen={openSections.beforeAfter}
+  onToggle={() => toggleSection("beforeAfter")}
+  
+>
+<div className="w-full flex justify-end">
+<button
+      type="button"
+      disabled={saving}
+      onClick={() => {
+        setForm((prev) => ({
+          ...prev,
+          beforeAfter: [
+            ...prev.beforeAfter,
+            { before: "", after: "" },
+          ],
+        }));
+        setToast({
+          type: "ok",
+          text: "Before/after item added.",
+        });
+      }}
+      className="rounded-lg border border-slate-300 bg-[#009966] px-3 py-1.5 text-sm font-medium text-white mb-5 cursor-pointer"
+    >
+      Add Item
+    </button>
+    </div>
+
+   
+    <div className="space-y-4">
+  {form.beforeAfter.map((item, index) => (
+    <AccordionSection
+      key={`before-after-${index}`}
+      title={`Item ${index + 1}`}
+      isOpen={openBeforeAfterItems[index] ?? true}
+      onToggle={() =>
+        setOpenBeforeAfterItems((prev) => ({
+          ...prev,
+          [index]: !prev[index],
+        }))
+      }
+      rightContent={
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() =>
+            setConfirm({
+              type: "beforeAfter",
+              index,
+            })
+          }
+          className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+        >
+          Remove
+        </button>
+      }
+    >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ImageUploader
+          label="Before image"
+          value={item.before}
+          onChange={(value) =>
+            setForm((prev) => ({
+              ...prev,
+              beforeAfter: prev.beforeAfter.map((row, i) =>
+                i === index
+                  ? { ...row, before: value }
+                  : row
+              ),
+            }))
+          }
+          disabled={saving}
+        />
+
+        <ImageUploader
+          label="After image"
+          value={item.after}
+          onChange={(value) =>
+            setForm((prev) => ({
+              ...prev,
+              beforeAfter: prev.beforeAfter.map((row, i) =>
+                i === index
+                  ? { ...row, after: value }
+                  : row
+              ),
+            }))
+          }
+          disabled={saving}
+        />
+      </div>
+    </AccordionSection>
+  ))}
+</div>
+  {/* <div className="space-y-6">
+    {form.beforeAfter.map((item, index) => (
+      <div
+        key={`before-after-${index}`}
+        className="rounded-lg border border-slate-200 p-3"
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-sm font-medium text-slate-800">
+            Item {index + 1}
+          </p>
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              setConfirm({
+                type: "beforeAfter",
+                index,
+              })
+            }
+            className="text-xs font-semibold text-white bg-red-700 rounded-lg border border-slate-300 px-3 py-1.5 cursor-pointer"
+          >
+            Remove
+          </button>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ImageUploader
+            label="Before image"
+            value={item.before}
+            onChange={(value) =>
+              setForm((prev) => ({
+                ...prev,
+                beforeAfter: prev.beforeAfter.map((row, i) =>
+                  i === index
+                    ? { ...row, before: value }
+                    : row
+                ),
+              }))
+            }
+            disabled={saving}
+          />
+
+          <ImageUploader
+            label="After image"
+            value={item.after}
+            onChange={(value) =>
+              setForm((prev) => ({
+                ...prev,
+                beforeAfter: prev.beforeAfter.map((row, i) =>
+                  i === index
+                    ? { ...row, after: value }
+                    : row
+                ),
+              }))
+            }
+            disabled={saving}
+          />
+        </div>
+      </div>
+    ))}
+  </div> */}
+</AccordionSection>
+
+<AccordionSection
+  title="For Whom"
+  isOpen={openSections.forWhom}
+  onToggle={() => toggleSection("forWhom")}
+  
+>
+  <div className="w-full flex justify-end">
+  <button
+      type="button"
+      disabled={saving}
+      onClick={() => {
+        setForm((prev) => ({
+          ...prev,
+          forWhom: [...prev.forWhom, { image: "", title: "" }],
+        }));
+        setToast({ type: "ok", text: "For-whom item added." });
+      }}
+      className="rounded-lg border border-slate-300 bg-[#009966] px-3 py-1.5 text-sm font-medium text-white mb-5 cursor-pointer"
+    >
+      Add Item
+    </button>
+  </div>
+
+  <div className="space-y-4">
+  {form.forWhom.map((item, index) => (
+    <AccordionSection
+      key={`for-whom-${index}`}
+      title={`Item ${index + 1}`}
+      isOpen={openForWhomItems[index] ?? true}
+      onToggle={() =>
+        setOpenForWhomItems((prev) => ({
+          ...prev,
+          [index]: !prev[index],
+        }))
+      }
+      rightContent={
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() =>
+            setConfirm({
+              type: "forWhom",
+              index,
+            })
+          }
+          className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+        >
+          Remove
+        </button>
+      }
+    >
+      <div className="space-y-3">
+        <ImageUploader
+          label="Image"
+          value={item.image}
+          onChange={(value) =>
+            setForm((prev) => ({
+              ...prev,
+              forWhom: prev.forWhom.map((row, i) =>
+                i === index
+                  ? { ...row, image: value }
+                  : row
+              ),
+            }))
+          }
+          disabled={saving}
+        />
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-800">
+            Title
+          </label>
+
+          <input
+            type="text"
+            value={item.title}
+            maxLength={300}
+            disabled={saving}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                forWhom: prev.forWhom.map((row, i) =>
+                  i === index
+                    ? {
+                        ...row,
+                        title: e.target.value,
                       }
-                      disabled={saving}
-                    />
-                    <div>
-                      <label className="mb-1 block text-sm font-medium text-slate-800">
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        value={item.title}
-                        maxLength={300}
-                        disabled={saving}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            forWhom: prev.forWhom.map((row, i) =>
-                              i === index
-                                ? { ...row, title: e.target.value }
-                                : row,
-                            ),
-                          }))
+                    : row
+                ),
+              }))
+            }
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          />
+        </div>
+      </div>
+    </AccordionSection>
+  ))}
+</div>
+  {/* <div className="space-y-6">
+    {form.forWhom.map((item, index) => (
+      <div
+        key={`for-whom-${index}`}
+        className="rounded-lg border border-slate-200 p-3"
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-sm font-medium text-slate-800">
+            Item {index + 1}
+          </p>
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() =>
+              setConfirm({
+                type: "forWhom",
+                index,
+              })
+            }
+            className="text-xs font-semibold text-white bg-red-700 rounded-lg border border-slate-300 px-3 py-1.5 cursor-pointer"
+          >
+            Remove
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <ImageUploader
+            label="Image"
+            value={item.image}
+            onChange={(value) =>
+              setForm((prev) => ({
+                ...prev,
+                forWhom: prev.forWhom.map((row, i) =>
+                  i === index
+                    ? { ...row, image: value }
+                    : row
+                ),
+              }))
+            }
+            disabled={saving}
+          />
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-800">
+              Title
+            </label>
+
+            <input
+              type="text"
+              value={item.title}
+              maxLength={300}
+              disabled={saving}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  forWhom: prev.forWhom.map((row, i) =>
+                    i === index
+                      ? {
+                          ...row,
+                          title: e.target.value,
                         }
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+                      : row
+                  ),
+                }))
+              }
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+            />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div> */}
+</AccordionSection>
+
+
 
           <div>
             <button
               type="button"
               disabled={saving}
               onClick={onSave}
-              className="rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              className="rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60 cursor-pointer"
             >
               {saving ? "Saving..." : "Save all images"}
             </button>

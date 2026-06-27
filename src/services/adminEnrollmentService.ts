@@ -71,3 +71,31 @@ export async function updateEnrollmentStatus(
     return { ok: false, message: "Network error." };
   }
 }
+
+
+export async function deleteEnrollment(id: string) {
+  try {
+    const res = await fetch(`/api/admin/enrollments/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        ok: false,
+        message: data.message || "Failed to delete request",
+      };
+    }
+
+    return {
+      ok: true,
+      message: data.message || "Request deleted successfully",
+    };
+  } catch {
+    return {
+      ok: false,
+      message: "Something went wrong.",
+    };
+  }
+}
