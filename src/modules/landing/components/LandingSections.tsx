@@ -18,6 +18,7 @@ import {
   testimonials,
 } from "@/utils/landingContent";
 import { aosInit } from "@/utils/aosClass";
+import Link from "next/link";
 
 const NAV_LINKS = [
   { href: "#problem", label: "সমস্যা" },
@@ -1263,6 +1264,19 @@ export function LandingFooter() {
             © {new Date().getFullYear()} Learn Plus. সর্বস্বত্ব সংরক্ষিত।
           </p>
           <p className="text-xs text-emerald-300/70">Dhaka, Bangladesh</p>
+        </div>
+        <div className="mt-0  pt-8 text-center">
+          <p className="text-base text-white-400">
+            Developed by{' '}
+            <Link
+              href="https://my-portfolio-asfaqur-rahman.web.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg font-semibold text-[#009b67] transition-colors hover:text-[#ecfdf5] underline"
+            >
+              Asfaqur Rahman
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
